@@ -2,6 +2,8 @@
 
 Aplikasi penjelajah resep makanan modern yang interaktif, dibangun dengan Next.js 15, Tailwind CSS v4, dan React Query. Pengguna dapat mengeksplorasi ribuan resep berdasarkan kategori makanan, bahan-bahan, maupun asal negara (kuliner lokal).
 
+**🔗 Live Demo:** [https://adib-cmlabs-test.netlify.app/](https://adib-cmlabs-test.netlify.app/)
+
 ---
 
 ## ✨ Fitur Utama
