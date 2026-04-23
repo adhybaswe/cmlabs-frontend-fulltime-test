@@ -1,52 +1,20 @@
-'use client';
-
-import { useMealsByCategory } from '@/services/mealQueries';
-import { use, useState } from 'react';
-import { Spinner } from '@/components/atoms/Spinner';
-import { SearchBar } from '@/components/molecules/SearchBar';
-import { MealCard } from '@/components/molecules/MealCard';
-import { BackButton } from '@/components/molecules/BackButton';
+import { fetchMealsByCategory } from '@/services/mealService';
 import { MainLayout } from '@/components/templates/MainLayout';
+import { MealList } from '@/components/organisms/MealList';
 
-export default function CategoryDetailPage({ params }: { params: Promise<{ 'category-name': string }> }) {
-  const resolvedParams = use(params);
+export default async function CategoryDetailPage({ params }: { params: Promise<{ 'category-name': string }> }) {
+  const resolvedParams = await params;
   const categoryName = resolvedParams['category-name'];
-  const { data: meals, isLoading, isError } = useMealsByCategory(categoryName);
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredMeals = meals?.filter((meal: any) =>
-    meal.strMeal.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  if (isLoading) return <MainLayout><Spinner /></MainLayout>;
-  if (isError) return <MainLayout><div className="text-center text-red-500">Error fetching meals</div></MainLayout>;
+  const meals = await fetchMealsByCategory(categoryName);
 
   return (
     <MainLayout>
-      <header className="mb-12">
-        <BackButton href="/" label="Back to Categories" />
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <h1 className="text-4xl font-extrabold">{decodeURIComponent(categoryName)} Recipes</h1>
-          <div className="w-full md:w-72">
-            <SearchBar 
-              value={searchTerm} 
-              onChange={setSearchTerm} 
-              placeholder="Search meals..." 
-            />
-          </div>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {filteredMeals?.map((meal: any) => (
-          <MealCard
-            key={meal.idMeal}
-            id={meal.idMeal}
-            name={meal.strMeal}
-            thumbnail={meal.strMealThumb}
-          />
-        ))}
-      </div>
+      <MealList 
+        meals={meals} 
+        title={categoryName} 
+        backHref="/" 
+        backLabel="Back to Categories" 
+      />
     </MainLayout>
   );
 }

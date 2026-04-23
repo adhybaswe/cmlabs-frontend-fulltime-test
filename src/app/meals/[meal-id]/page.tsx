@@ -1,19 +1,15 @@
-'use client';
-
-import { useMealDetail } from '@/services/mealQueries';
-import { use } from 'react';
+import { fetchMealDetail } from '@/services/mealService';
 import Image from 'next/image';
-import { Spinner } from '@/components/atoms/Spinner';
 import { BackButton } from '@/components/molecules/BackButton';
 import { MainLayout } from '@/components/templates/MainLayout';
 
-export default function MealDetailPage({ params }: { params: Promise<{ 'meal-id': string }> }) {
-  const resolvedParams = use(params);
+export default async function MealDetailPage({ params }: { params: Promise<{ 'meal-id': string }> }) {
+  const resolvedParams = await params;
   const mealId = resolvedParams['meal-id'];
-  const { data: meal, isLoading, isError } = useMealDetail(mealId);
+  
+  // SSR: Langsung memanggil service di sisi server
+  const meal = await fetchMealDetail(mealId);
 
-  if (isLoading) return <MainLayout><Spinner /></MainLayout>;
-  if (isError) return <MainLayout><div className="text-center text-red-500 py-20 font-bold">Error fetching meal details</div></MainLayout>;
   if (!meal) return <MainLayout><div className="text-center py-20">Meal not found</div></MainLayout>;
 
   const ingredients = [];
